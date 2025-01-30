@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %} Update Post {% endblock %}
+{% block content %}
+<div class="container my-4">
+    <h1 class="text-center text-primary mb-5">Update Post</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }} <!-- CSRF Token -->
+
+        <div class="form-group">
+            {{ form.heading.label(class="form-label") }}
+            {{ form.heading(class="form-control", id="heading") }} <!-- Renders the heading input field -->
+            {% if form.heading.errors %}
+                <div class="text-danger">{{ form.heading.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.content.label(class="form-label") }}
+            {{ form.content(class="form-control", id="content", rows="5") }} <!-- Renders the content textarea -->
+            {% if form.content.errors %}
+                <div class="text-danger">{{ form.content.errors[0] }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Update Post</button>
+    </form>
+</div>
+{% endblock %}

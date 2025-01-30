@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %} Home page {% endblock %}
+{% block content %}
+<style>
+    .main-content {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        height: 80vh; /* Centers content vertically within the remaining 80% of the page */
+    }
+    table, th, td {
+  border: 1px solid black;
+}
+</style>
+{%if current_user.is_authenticated%}
+<div class="main-content">
+    <br>
+<p>Welcome to our blog where writers share their content in their areas of adversity <br>
+    and the readers enjoy quality content depending on their areas of interest.<br>
+    <span style="color:blueviolet;">I hope you find something that interests you.</span></p>
+   
+</div>
+{%else%}
+  <p>please login first</p>
+{%endif%}
+<div>
+  <p>
+{%for post in posts%}
+  {{post.heading}}
+{%endfor%}
+</p>
+</div>
+
+
+
+
+
+   
+{% endblock %}
+  

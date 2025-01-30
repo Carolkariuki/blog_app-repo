@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Writers Page{% endblock %}
+{% block content %}
+<style>
+    /* Main Container */
+    .container {
+        margin: auto;
+        max-width: 80%;
+        padding: 20px;
+    }
+    h1 {
+    color:blueviolet; /* Primary color */
+    font-size: 2.5rem;
+    text-align: start;
+    margin-bottom: 1.0rem;
+}
+    </style>
+
+   <div class="container"   style="margin-top: 30px;">
+   <h1>Add Post</h1> 
+   <form method="POST" action="{{ url_for('views.add_posts') }}">
+    {{ form.csrf_token }}
+
+    <div class="mb-3">
+      {{ form.heading.label(class="form-label") }}
+      {{ form.heading(class="form-control", placeholder="Enter Heading") }}
+      {% if form.heading.errors %}
+          <div class="text-danger">
+              {{ form.heading.errors[0] }}
+          </div>
+      {% endif %} 
+
+      <div class="mb-3">
+        {{ form.content.label(class="form-label") }}
+        {{ form.content(class="form-control", placeholder="Enter Content") }}
+        {% if form.content.errors %}
+            <div class="text-danger">
+                {{ form.content.errors[0] }}
+            </div>
+        {% endif %}
+  <br>
+  <div style="margin-left: 20px;" class="text-start">
+    {{ form.submit(class="btn btn-primary") }}
+</div>
+        
+</form>
+
+{% endblock %}

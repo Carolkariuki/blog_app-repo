@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %} signup page {% endblock %}
+{% block content %}
+<form action="{{ url_for('auth.signup') }}" method="post">
+
+  {{ form.csrf_token }}
+
+  <!-- Email Field -->
+  <div class="mb-3">
+      {{ form.email.label(class="form-label") }}
+      {{ form.email(class="form-control", placeholder="Enter Email") }}
+      {% if form.email.errors %}
+          <div class="text-danger">
+              {{ form.email.errors[0] }}
+          </div>
+      {% endif %}
+  </div>
+
+  <!-- Username Field -->
+  <div class="mb-3">
+      {{ form.username.label(class="form-label") }}
+      {{ form.username(class="form-control", placeholder="Enter Username") }}
+      {% if form.username.errors %}
+          <div class="text-danger">
+              {{ form.username.errors[0] }}
+          </div>
+      {% endif %}
+  </div>
+
+  <!-- Fullname Field -->
+  <div class="mb-3">
+      {{ form.fullname.label(class="form-label") }}
+      {{ form.fullname(class="form-control", placeholder="Enter Fullname") }}
+      {% if form.fullname.errors %}
+          <div class="text-danger">
+              {{ form.fullname.errors[0] }}
+          </div>
+      {% endif %}
+  </div>
+
+  <!-- About Field -->
+  <div class="mb-3">
+      {{ form.about.label(class="form-label") }}
+      {{ form.about(class="form-control", placeholder="Write about yourself") }}
+      {% if form.about.errors %}
+          <div class="text-danger">
+              {{ form.about.errors[0] }}
+          </div>
+      {% endif %}
+  </div>
+
+  <div class="mb-3">
+    {{ form.role.label(class="form-label") }}
+    {{ form.role(class="form-control", placeholder="what is your role") }}
+    {% if form.role.errors %}
+        <div class="text-danger">
+            {{ form.role.errors[0] }}
+        </div>
+    {% endif %}
+</div>
+  <!-- Password1 Field -->
+  <div class="mb-3">
+      {{ form.password1.label(class="form-label") }}
+      {{ form.password1(class="form-control", placeholder="Enter Password") }}
+      {% if form.password1.errors %}
+          <div class="text-danger">
+              {{ form.password1.errors[0] }}
+          </div>
+      {% endif %}
+  </div>
+
+  <!-- Password2 Field -->
+  <div class="mb-3">
+      {{ form.password2.label(class="form-label") }}
+      {{ form.password2(class="form-control", placeholder="Re-enter Password") }}
+      {% if form.password2.errors %}
+          <div class="text-danger">
+              {{ form.password2.errors[0] }}
+          </div>
+      {% endif %}
+  </div>
+
+  <!-- Submit Button -->
+  <div class="text-center">
+      {{ form.submit(class="btn btn-primary") }}
+  </div>
+</form>
+
+{% endblock %} 
