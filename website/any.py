@@ -5,5 +5,5 @@ def change_keys(any_dict):
         
 
 
-dict1={1:'bella',2:'njeri'}    
+dict1={1:'bella',2:'alice'}    
 print(change_keys(dict1))
