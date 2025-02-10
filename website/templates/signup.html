@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %} signup page {% endblock %}
 {% block content %}
-<form action="{{ url_for('auth.signup') }}" method="post">
+<form action="{{ url_for('auth.signup') }}" method="post" enctype="multipart/form-data">
 
   {{ form.csrf_token }}
 
@@ -58,6 +58,17 @@
         </div>
     {% endif %}
 </div>
+
+<div class="mb-3">
+    {{ form.profile_image.label(class="form-label") }}
+    {{ form.profile_image(class="form-control") }}
+    {% if form.profile_image.errors %}
+        <div class="text-danger">
+            {{ form.profile_image.errors[0] }}
+        </div>
+    {% endif %}
+</div>
+
   <!-- Password1 Field -->
   <div class="mb-3">
       {{ form.password1.label(class="form-label") }}

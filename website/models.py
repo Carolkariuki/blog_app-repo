@@ -5,7 +5,6 @@ from sqlalchemy import func
 
 
 class Base:
-
     def save(self):
         db.session.add(self)
         db.session.commit()
@@ -17,10 +16,7 @@ class Base:
     def commit(self):
         db.session.commit()
 
-
-
 class User(db.Model,Base,UserMixin):
-
     __tablename__='users'
 
     id=db.Column(db.Integer,primary_key=True)
@@ -29,6 +25,7 @@ class User(db.Model,Base,UserMixin):
     email=db.Column(db.String(150),unique=True,nullable=False)
     about=db.Column(db.Text,nullable=False)
     role = db.Column(db.String(20), nullable=False, default='viewer')
+    profile_image=db.Column(db.String(100),nullable=False,default='default_profile_pic.png')
     join_date=db.Column(db.Date,nullable=False, default=date.today)
     password=db.Column(db.String(2000),nullable=False)
 
@@ -49,7 +46,6 @@ class Post(db.Model,Base):
     user_id=db.Column(db.Integer,db.ForeignKey('users.id',ondelete='CASCADE'),nullable=False)
     likes=db.Column(db.Integer,default=0,nullable=False)
     comment_count=db.Column(db.Integer,default=0,nullable=False)
-
 
     comments=db.relationship('Comment',backref='post_comments',lazy=True,cascade="all, delete-orphan")
 

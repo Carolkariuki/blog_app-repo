@@ -4,11 +4,12 @@
 
 <div class="container">
    
-            <form action="{{ url_for('views.update_profile') }}" method="post" name="update_profile">
+            <form action="{{ url_for('views.update_profile') }}" method="post" name="update_profile" enctype="multipart/form-data">
                 {{ form.csrf_token }}
-                <div class="mb-3">
-                    <h1>Username: <span style="font-weight: normal;">{{ current_user.username }}</span></h1>
-                    
+                <div style="display: flex; align-items: center;  width: 50%;">
+                    <h1><strong>{{ current_user.username }}</strong></h1>
+            </div>
+            <img src="{{ url_for('static', filename='image/' + current_user.profile_image if current_user.profile_image else 'default.jpg') }}" alt="Profile Image" width="150">
                     <!-- Username Field -->
                     <div class="mb-3">
                         {{ form.username.label(class="form-label") }}
@@ -27,6 +28,16 @@
                         {% if form.fullname.errors %}
                             <div class="text-danger">
                                 {{ form.fullname.errors[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.profile_image.label(class="form-label") }}
+                        {{ form.profile_image(class="form-control") }}
+                        {% if form.profile_image.errors %}
+                            <div class="text-danger">
+                                {{ form.profile_image.errors[0] }}
                             </div>
                         {% endif %}
                     </div>
