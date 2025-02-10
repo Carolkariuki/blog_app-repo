@@ -1,5 +1,5 @@
 
-from flask import Blueprint,render_template,request,flash,redirect,url_for
+from flask import Blueprint,render_template,request,flash,redirect,url_for,current_app
 from flask_login import login_required,current_user,logout_user
 from .models import User,Post,Comment,Subscriber
 from . import db
@@ -7,6 +7,10 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 from .forms import UpdateProfileForm,AddPostForm,CommentForm
 import functools
+from werkzeug.utils import secure_filename
+import os
+
+ 
 
 views=Blueprint('views',__name__)
 
@@ -20,26 +24,9 @@ def role_required(*roles):
       return wrapper
     return decorator
           
-
-
-
-
 @views.route('/',methods=['GET'])
 def home():
-    user=User.query.get(3)
-    print(user.username)
-    if user:
-        
-        posts=user.posts
-       
-        for post in posts:
-           print(post.heading)
-    post_count=Post.query.filter_by(user_id=user.id).count()
-    print(post_count)
-   
-    return render_template('home.html',user=user,posts=posts)
-
-
+    return render_template('home.html')
 
 @views.route('/all_posts',methods=['GET'])
 def all_posts():
@@ -63,7 +50,6 @@ def feedback_comment(post_id):
     print(form)
     return redirect(url_for('views.all_posts'))
     
-
 @views.route('/delete_comment/<int:comment_id>', methods=['POST','DELETE'])
 @login_required
 def delete_comment(comment_id):
@@ -73,7 +59,6 @@ def delete_comment(comment_id):
     if post.comment_count > 0:
         post.comment_count -= 1
         post.commit()
-   
     flash('Comment deleted successfully!', category='success')
     return redirect(url_for('views.all_posts'))
 
@@ -113,10 +98,16 @@ def update_profile():
         username=form.username.data
         fullname=form.fullname.data
         about=form.about.data
-
+        if form.profile_image.data:
+            filename = secure_filename(form.profile_image.data.filename)
+            image_path =os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            form.profile_image.data.save(image_path)
+      
         current_user.username=username
         current_user.fullname=fullname
+        current_user.profile_image=filename
         current_user.about=about
+        
         current_user.commit()
         flash('user updated',category='success')
         return render_template('update_profile.html',form=form)
@@ -125,7 +116,6 @@ def update_profile():
         form.fullname.data = current_user.fullname
         form.about.data = current_user.about
     return render_template('update_profile.html',form=form)
-
 
 @views.route('/add_posts',methods=['GET','POST'])
 @login_required
@@ -158,7 +148,6 @@ def update_post(post_id):
         form.heading.data = post.heading
         form.content.data = post.content
     return render_template('update_post.html', post=post,form=form)
-
 
 @views.route('/delete_post/<int:post_id>',methods=['POST','DELETE'])
 @login_required
