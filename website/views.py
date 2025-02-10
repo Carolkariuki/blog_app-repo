@@ -10,6 +10,9 @@ import functools
 from werkzeug.utils import secure_filename
 import os
 
+DEFAULT_PROFILE_IMAGE = "default_profile_pic.png"
+
+
  
 
 views=Blueprint('views',__name__)
@@ -98,24 +101,44 @@ def update_profile():
         username=form.username.data
         fullname=form.fullname.data
         about=form.about.data
-        if form.profile_image.data:
+        if request.form.get('remove_image') == 'yes':
+            # Delete only if it's not already the default
+            if current_user.profile_image != DEFAULT_PROFILE_IMAGE:
+                old_image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], current_user.profile_image)
+                if os.path.exists(old_image_path):
+                    os.remove(old_image_path)
+
+            current_user.profile_image = DEFAULT_PROFILE_IMAGE  # Reset to default
+
+        # Handle profile picture upload
+        elif form.profile_image.data:
             filename = secure_filename(form.profile_image.data.filename)
-            image_path =os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             form.profile_image.data.save(image_path)
-      
-        current_user.username=username
-        current_user.fullname=fullname
-        current_user.profile_image=filename
-        current_user.about=about
-        
-        current_user.commit()
-        flash('user updated',category='success')
-        return render_template('update_profile.html',form=form)
+
+            # Delete the old image (if it wasn't the default)
+            if current_user.profile_image and current_user.profile_image != DEFAULT_PROFILE_IMAGE:
+                old_image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], current_user.profile_image)
+                if os.path.exists(old_image_path):
+                    os.remove(old_image_path)
+
+            current_user.profile_image = filename  # Set new image
+
+        # Update user details
+        current_user.username = username
+        current_user.fullname = fullname
+        current_user.about = about
+
+        db.session.commit()  # Save changes
+        flash('Profile updated successfully', category='success')
+        return render_template('update_profile.html', form=form)
+
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.fullname.data = current_user.fullname
         form.about.data = current_user.about
-    return render_template('update_profile.html',form=form)
+
+    return render_template('update_profile.html', form=form)
 
 @views.route('/add_posts',methods=['GET','POST'])
 @login_required
