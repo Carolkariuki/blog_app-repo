@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm, CSRFProtect
-from wtforms import StringField,PasswordField,TextAreaField,SubmitField,EmailField
+from wtforms import StringField,PasswordField,TextAreaField,SubmitField,EmailField,FileField
 from wtforms.validators import DataRequired, Length,Email,EqualTo
+from flask_wtf.file import FileAllowed
 
 
 class SignupForm(FlaskForm):
@@ -9,6 +10,7 @@ class SignupForm(FlaskForm):
     email=EmailField('Email',validators=[DataRequired(),Email(),Length(min=10)])
     about=TextAreaField('About',validators=[DataRequired(),Length(min=10,max=200)])
     role=StringField('Role',validators=[Length(min=4,max=20)])
+    profile_image=FileField('Upload Profile image',validators=[FileAllowed(['jpg', 'png', 'jpeg'], message='Images only!')])
     password1=PasswordField('Password1',validators=[DataRequired(),Length(min=4)])
     password2=PasswordField('Confirm Password',validators=[DataRequired(),EqualTo('password1',message='passwords must match')])
     submit=SubmitField('Signup')
@@ -21,6 +23,7 @@ class LoginForm(FlaskForm):
 class UpdateProfileForm(FlaskForm):
     username=StringField('Username',validators=[DataRequired(),Length(min=2,max=10)])
     fullname=StringField('Fullname',validators=[DataRequired(),Length(min=5)])
+    profile_image=FileField('Upload Profile image',validators=[FileAllowed(['jpg', 'png', 'jpeg'], message='Images only!')])
     about=TextAreaField('About',validators=[DataRequired(),Length(min=10,max=200)])
     submit=SubmitField('Update')
 

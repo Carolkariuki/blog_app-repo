@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail, Message
+import os
+
 
 mail = Mail()
 
@@ -20,6 +22,13 @@ def create_app():
     app.config['MAIL_USERNAME'] = 'carolnjerikariuki94@gmail.com'
     app.config['MAIL_PASSWORD'] = 'wmcc dkuk ysby pkvw'
     app.config['MAIL_DEFAULT_SENDER'] ='carolnjerikariuki94@gmail.com'
+
+    upload_folder = os.path.join(app.root_path, 'static', 'image')
+    app.config['UPLOAD_FOLDER'] = upload_folder
+    
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)
+
     mail.init_app(app)
     db.init_app(app)
 
