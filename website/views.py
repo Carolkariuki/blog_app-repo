@@ -129,7 +129,7 @@ def update_profile():
         current_user.fullname = fullname
         current_user.about = about
 
-        db.session.commit()  # Save changes
+        db.session.commit() 
         flash('Profile updated successfully', category='success')
         return render_template('update_profile.html', form=form)
 
