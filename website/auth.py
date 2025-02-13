@@ -23,7 +23,7 @@ def signup():
         image_file = form.profile_image.data
         if image_file:
             filename = secure_filename(image_file.filename)
-            image_path = os.path.join('website/static/image', filename)
+            image_path = os.path.join('static/image', filename)
             image_file.save(image_path)
         else:
             filename = 'default_profile_pic.png'

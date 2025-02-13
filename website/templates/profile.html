@@ -2,17 +2,28 @@
 {% block title %}{{ user.username }}'s Profile{% endblock %}
 
 {% block content %}
-<div >
-<img src="{{ url_for('static', filename='image/' + current_user.profile_image) }}" alt="Profile Image" width="150">
-<h1 style="color: blueviolet;">ABOUT THE WRITER</h1>
-<h1 style="color: black;">Fullname:<span style="color:grey;" >{{user.fullname}}</span></h1>
-<h1 style="color: black;">Username:<span style="color:grey;">{{user.username}}</span></h1>
-<h1 style="color: black;">Email:<span style="color:grey;">{{user.email}}</span></h1>
-<h1 style="color: black;">About:<span style="color:grey;">{{ user.about}}</span></h1> 
+<div style="display: flex; align-items: center; ">
+    <img src="{{ url_for('static', filename='image/' + current_user.profile_image) }}" alt="Profile Image" width="150" 
+         style="border-radius: 50%; border: 3px solid #ccc;">
+
+    <div>
+        <h1 style="color: black; margin: 5px 0;">Username: 
+            <span style="color: grey; font-weight: normal;">{{ user.username }}</span>
+        </h1>
+        <h1 style="color: black; margin: 5px 0;">Email: 
+            <span style="color: grey; font-weight: normal;">{{ user.email }}</span>
+        </h1>
+        <h1 style="color: black; margin: 5px 0;">About: 
+            <span style="color: grey; font-weight: normal;">{{ user.about }}</span>
+        </h1>
+    </div>
 </div>
 
 
-<div>
+
+
+
+
     <h1 style="color: cadetblue;"> POSTS;</h1>
 
     <form action="{{ url_for('views.subscribe', user_id=user.id) }}" method="POST">
