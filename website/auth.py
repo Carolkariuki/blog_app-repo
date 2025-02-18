@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from .models import User,Post
 from . import db
 from flask_login import login_user,logout_user,login_required
-from .forms import SignupForm,LoginForm
+from .forms import SignupForm,LoginForm,ForgotPasswordForm,ResetPasswordForm
 from .utils import send_email
 from werkzeug.utils import secure_filename
 import os
@@ -64,6 +64,43 @@ def login():
            flash('user not signed up',category='error')
            return redirect(url_for('auth.signup'))
     return render_template('login.html',form=form)
+
+
+@auth.route("/forgot_password", methods=['GET', 'POST'])
+def forgot_password():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+     
+        user = User.query.filter_by( email=form.email.data).first()
+        if user:
+            token=user.get_reset_token()
+            subject='reset password link'
+            body=f'''To reset your password, click the following link:
+                {url_for('auth.reset_password', token=token, _external=True)}
+                 If you did not request this, ignore this email.'''
+            
+            send_email(subject,[user.email],body)
+        flash('If an account with that email exists, a reset link has been sent.',category='success')
+        return redirect(url_for('auth.login'))
+    return render_template('forgot_password.html', form=form)
+
+@auth.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_password(token):
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('Invalid or expired token.', category='error')
+        return redirect(url_for('auth.forgot_password'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        password= form.password.data
+        new_password=generate_password_hash(password)
+        user.password = new_password
+        user.commit()
+        flash('Your password has been updated! You can now log in.', 'success')
+        return redirect(url_for('auth.login'))
+    
+    return render_template('reset_password.html', form=form,token=token)
 
 @auth.route('/logout',methods=['GET','POST'])
 @login_required

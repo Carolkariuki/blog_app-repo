@@ -14,6 +14,7 @@ load_dotenv()
 secret_key=os.getenv('secret_key')
 gmail_password=os.getenv('gmail_password')
 database_uri=os.getenv('database_uri')
+my_email=os.getenv('my_email')
 
 def create_app():
     app=Flask(__name__)
@@ -22,9 +23,9 @@ def create_app():
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = 'carolnjerikariuki94@gmail.com'
+    app.config['MAIL_USERNAME'] = my_email
     app.config['MAIL_PASSWORD'] = gmail_password
-    app.config['MAIL_DEFAULT_SENDER'] ='carolnjerikariuki94@gmail.com'
+    app.config['MAIL_DEFAULT_SENDER'] =my_email
 
     upload_folder = os.path.join(app.root_path, 'static', 'image')
     app.config['UPLOAD_FOLDER'] = upload_folder
@@ -52,7 +53,7 @@ def create_app():
     app.register_blueprint(auth,url_prefix='/')
 
     from .models import User,Post,Comment
-    from .forms  import SignupForm,LoginForm,UpdateProfileForm,AddPostForm,CommentForm
+    from .forms  import SignupForm,LoginForm,ForgotPasswordForm,ResetPasswordForm,UpdateProfileForm,AddPostForm,CommentForm
     migrate.init_app(app, db) 
 
     return app
