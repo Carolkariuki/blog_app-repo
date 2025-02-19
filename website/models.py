@@ -2,6 +2,9 @@ from . import db
 from flask_login  import UserMixin
 from datetime import datetime,date
 from sqlalchemy import func
+from itsdangerous import URLSafeTimedSerializer as Serializer
+from flask import current_app
+
 
 
 class Base:
@@ -32,6 +35,21 @@ class User(db.Model,Base,UserMixin):
     posts=db.relationship('Post',backref='users', lazy=True,cascade="all, delete-orphan")
     subscribers=db.relationship('Subscriber',backref='users', lazy=True,cascade="all, delete-orphan")
     comments=db.relationship('Comment',backref='user_comments',lazy=True,cascade="all, delete-orphan")
+
+    def get_reset_token(self, expires_sec=1800):
+        token_serializer= Serializer(current_app.config['SECRET_KEY'])
+        return token_serializer.dumps(self.email, salt='password-reset')
+
+    @staticmethod
+    def verify_reset_token(token, expires_sec=1800):
+        token_serializer = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            email = token_serializer.loads(token, salt='password-reset', max_age=expires_sec)
+        except:
+            return None
+        return User.query.filter_by(email=email).first()
+
+
     def __repr__(self):
         return f"User(id={self.id}, name='{self.username}', name='{self.fullname}', email='{self.email}')"
 

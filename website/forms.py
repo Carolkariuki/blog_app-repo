@@ -20,6 +20,15 @@ class LoginForm(FlaskForm):
     password=PasswordField('Password',validators=[DataRequired()])  
     submit=SubmitField('Login')
 
+class ForgotPasswordForm(FlaskForm):
+    email=EmailField('Email',validators=[DataRequired(),Email(),Length(min=10)]) 
+    submit=SubmitField('Send Reset link')
+
+class ResetPasswordForm(FlaskForm):
+    password=PasswordField('New password',validators=[DataRequired(),Length(min=4)])
+    confirm_password=PasswordField('Confirm password',validators=[EqualTo('password')])
+    submit=SubmitField('Reset Password')
+
 class UpdateProfileForm(FlaskForm):
     username=StringField('Username',validators=[DataRequired(),Length(min=2,max=10)])
     fullname=StringField('Fullname',validators=[DataRequired(),Length(min=5)])
