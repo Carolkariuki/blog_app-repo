@@ -9,7 +9,7 @@
                 <div style="display: flex; align-items: center;  width: 50%;">
                     <h1><strong>{{ current_user.username }}</strong></h1>
             </div>
-            <img src="{{ url_for('static', filename='image/' + current_user.profile_image if current_user.profile_image else 'default.jpg') }}" alt="Profile Image" width="150">
+            <img class="profile-image" src="{{ url_for('static', filename='images/' + current_user.profile_image if current_user.profile_image else 'default_profile_pic.png,') }}" alt="Profile Image" width="150">
                    
                     <div class="mb-3">
                         {{ form.username.label(class="form-label") }}

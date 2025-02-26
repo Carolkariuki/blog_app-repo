@@ -27,7 +27,7 @@ def create_app():
     app.config['MAIL_PASSWORD'] = gmail_password
     app.config['MAIL_DEFAULT_SENDER'] =my_email
 
-    upload_folder = os.path.join(app.root_path, 'static', 'image')
+    upload_folder = os.path.join(app.root_path, 'static', 'images')
     app.config['UPLOAD_FOLDER'] = upload_folder
     
     if not os.path.exists(upload_folder):

@@ -1,4 +1,4 @@
-from flask import Blueprint,request,flash,render_template,redirect,url_for
+from flask import Blueprint,request,flash,render_template,redirect,url_for,current_app
 from werkzeug.security import generate_password_hash,check_password_hash
 from .models import User,Post
 from . import db
@@ -7,6 +7,8 @@ from .forms import SignupForm,LoginForm,ForgotPasswordForm,ResetPasswordForm
 from .utils import send_email
 from werkzeug.utils import secure_filename
 import os
+
+DEFAULT_PROFILE_IMAGE = "default_profile_pic.png"
  
 auth=Blueprint('auth',__name__)
 
@@ -21,26 +23,33 @@ def signup():
         role = form.role.data
         password1 = form.password1.data
         image_file = form.profile_image.data
+        
+        filename = 'default_profile_pic.png' 
         if image_file:
+            print(f"Received file: {image_file.filename}")  # Debugging
+            
             filename = secure_filename(image_file.filename)
-            image_path = os.path.join('static/image', filename)
+            image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            
+            print(f"Saving image to: {image_path}")  # Debugging
+            
+            # Ensure the images directory exists
+            # os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+            # Save the uploaded file
             image_file.save(image_path)
-        else:
-            filename = 'default_profile_pic.png'
 
         user = User.query.get(email)
         if user:
             flash('user already exists', category='error')
             return redirect(url_for('auth.login'))
-        
-        new_user=User(username=username,fullname=fullname,email=email,about=about,role=role,profile_image=filename,password=generate_password_hash(password1))
-        new_user.save()
         subject='Welcome to the writing app'
         body=f'Welcome {username} enjoy your experience with this app'
         send_email(subject,[email],body)
         flash('account created',category='success')
+        new_user=User(username=username,fullname=fullname,email=email,about=about,role=role,profile_image=filename,password=generate_password_hash(password1))
+        new_user.save()
         login_user(new_user)
-        print(repr(new_user))
         return redirect(url_for('views.update_profile'))
     return render_template('signup.html',form=form)
 
