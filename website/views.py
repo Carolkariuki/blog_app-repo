@@ -34,8 +34,10 @@ def home():
 @views.route('/all_posts',methods=['GET'])
 def all_posts():
     form=CommentForm()
-    posts = Post.query.order_by(desc(Post.date_posted)).all()
-    return render_template('all_posts.html',posts=posts,form=form)
+    page = request.args.get('page', 1, type=int)  
+    per_page = 2
+    paginated_posts = Post.query.order_by(desc(Post.date_posted)).paginate(page=page, per_page=per_page, error_out=False)
+    return render_template('all_posts.html',posts=paginated_posts,form=form)
 
 @views.route('/feedback_comment/<int:post_id>', methods=['POST'])
 @login_required
@@ -114,6 +116,7 @@ def update_profile():
         elif form.profile_image.data:
             filename = secure_filename(form.profile_image.data.filename)
             image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            print(image_path)
             form.profile_image.data.save(image_path)
 
             # Delete the old image (if it wasn't the default)

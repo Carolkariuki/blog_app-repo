@@ -109,10 +109,10 @@ form {
     padding-right: 20px;
 }
 
-.profile-image-section img {
+.profile-image {
     width: 150px;
     height: 150px;
-    border-radius: 50%;
+    border-radius:75%;
     object-fit: cover;
     border: 2px solid #ddd;
 }

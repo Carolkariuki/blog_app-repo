@@ -6,5 +6,5 @@ id_rsa.pub
 *.pem
 *.key
 .env
-static/images/*
-!static/images/default-profile.png  # Keep the default profile image
+website/static/images/
+

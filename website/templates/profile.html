@@ -3,8 +3,8 @@
 
 {% block content %}
 <div style="display: flex; align-items: center; ">
-    <img src="{{ url_for('static', filename='image/' + current_user.profile_image) }}" alt="Profile Image" width="150" 
-         style="border-radius: 50%; border: 3px solid #ccc;">
+    <img class="profile-image" src="{{ url_for('static', filename='images/' + current_user.profile_image) }}" alt="Profile Image"
+        >
 
     <div>
         <h1 style="color: black; margin: 5px 0;">Username: 
