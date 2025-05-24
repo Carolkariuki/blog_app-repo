@@ -19,6 +19,17 @@ class Base:
     def commit(self):
         db.session.commit()
 
+class Subscription(db.Model,Base):
+    __tablename__='subscriptions'
+    id=db.Column(db.Integer,primary_key=True)
+    subscriber_id=db.Column(db.Integer,db.ForeignKey('users.id',ondelete='CASCADE'),nullable=False)
+    subscribed_to_id=db.Column(db.Integer,db.ForeignKey('users.id',ondelete='CASCADE'),nullable=False)
+    date_subscribed=db.Column(db.Date,nullable=False,default=date.today)
+
+    subscriber = db.relationship('User', foreign_keys=[subscriber_id], backref='user_subscriptions')
+    subscribed_to = db.relationship('User', foreign_keys=[subscribed_to_id], backref='subscribers_list')
+
+
 class User(db.Model,Base,UserMixin):
     __tablename__='users'
 
@@ -33,8 +44,9 @@ class User(db.Model,Base,UserMixin):
     password=db.Column(db.String(2000),nullable=False)
 
     posts=db.relationship('Post',backref='users', lazy=True,cascade="all, delete-orphan")
-    subscribers=db.relationship('Subscriber',backref='users', lazy=True,cascade="all, delete-orphan")
     comments=db.relationship('Comment',backref='user_comments',lazy=True,cascade="all, delete-orphan")
+    subscriptions = db.relationship('Subscription', foreign_keys=[Subscription.subscriber_id], backref='subscribed_user', lazy='dynamic')
+    subscribers = db.relationship('Subscription', foreign_keys=[Subscription.subscribed_to_id], backref='subscribed_to_user', lazy='dynamic')
 
     def get_reset_token(self, expires_sec=1800):
         token_serializer= Serializer(current_app.config['SECRET_KEY'])
@@ -48,6 +60,9 @@ class User(db.Model,Base,UserMixin):
         except:
             return None
         return User.query.filter_by(email=email).first()
+    
+    def is_subscribed(self, user):
+        return Subscription.query.filter_by(subscriber_id=self.id, subscribed_to_id=user.id).first() 
 
 
     def __repr__(self):
@@ -74,12 +89,6 @@ class Comment(db.Model,Base):
     feedback=db.Column(db.String(100),nullable=False)
     date_posted=db.Column(db.Date, nullable=False,default=date.today)
     post_id=db.Column(db.Integer,db.ForeignKey('posts.id',ondelete='CASCADE'),nullable=False)
-    user_id=db.Column(db.Integer,db.ForeignKey('users.id',ondelete='CASCADE'),nullable=False)
-
-class Subscriber(db.Model,Base):
-    __tablename__='subscribers'
-    id=db.Column(db.Integer,primary_key=True)
-    email=db.Column(db.String(150),unique=True,nullable=False)
     user_id=db.Column(db.Integer,db.ForeignKey('users.id',ondelete='CASCADE'),nullable=False)
 
 

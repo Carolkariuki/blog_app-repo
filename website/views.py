@@ -1,7 +1,7 @@
 
 from flask import Blueprint,render_template,request,flash,redirect,url_for,current_app
 from flask_login import login_required,current_user,logout_user
-from .models import User,Post,Comment,Subscriber
+from .models import User,Post,Comment,Subscription
 from . import db
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
@@ -79,6 +79,7 @@ def like_post(post_id):
 
 @views.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def profile(user_id):
+    print(f"Accessing profile of user ID: {user_id}")  # Debugging
     user = User.query.get(user_id)
     if not user:
         flash('Writer not found!', 'error')
@@ -88,10 +89,18 @@ def profile(user_id):
 
 @views.route('/subscribe/<int:user_id>', methods=['POST'])
 def subscribe(user_id):
-    if request.method=='POST':
-        email=request.form['email']
-        new_subscriber=Subscriber(email=email,user_id=user_id)
-        new_subscriber.save()
+    user_to_subscribe_to=User.query.get(user_id)
+    if current_user.id ==user_to_subscribe_to.id:
+        flash('you cannot subscribe to yourself',category='error')
+        return redirect(url_for('views.profile',user_id=user_id))
+    existing_subscription = Subscription.query.filter_by(subscriber_id=current_user.id,
+        subscribed_to_id=user_to_subscribe_to.id).first()
+    if existing_subscription:
+        existing_subscription.delete()
+        flash('You have unsubscribed from this writer',category='success')
+    else:
+        new_subscription=Subscription(subscriber=current_user,subscribed_to=user_to_subscribe_to)
+        new_subscription.save()
         flash('subscribed',category='success')
     return redirect(url_for('views.profile',user_id=user_id))
 
