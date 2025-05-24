@@ -2,61 +2,76 @@
 {% block title %}{{ user.username }}'s Profile{% endblock %}
 
 {% block content %}
-<div style="display: flex; align-items: center; ">
-    <img class="profile-image" src="{{ url_for('static', filename='images/' + current_user.profile_image) }}" alt="Profile Image"
-        >
-
-    <div>
-        <h1 style="color: black; margin: 5px 0;">Username: 
-            <span style="color: grey; font-weight: normal;">{{ user.username }}</span>
-        </h1>
-        <h1 style="color: black; margin: 5px 0;">Email: 
-            <span style="color: grey; font-weight: normal;">{{ user.email }}</span>
-        </h1>
-        <h1 style="color: black; margin: 5px 0;">About: 
-            <span style="color: grey; font-weight: normal;">{{ user.about }}</span>
-        </h1>
-    </div>
-</div>
-
-
-
-
-
-
-    <h1 style="color: cadetblue;"> POSTS;</h1>
-
-    <form action="{{ url_for('views.subscribe', user_id=user.id) }}" method="POST">
-        <label for="email" style="font-size: 18px;">Subscribe to {{ user.fullname }}'s content:</label><br>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-        <button type="submit" class="btn btn-outline-primary btn-sm">Subscribe</button>
-    </form>
-    <br>
-    <p><a href="{{ url_for('views.all_posts') }}" style="margin-left: 100px;" class="btn btn-secondary">Back</a></p>
+<a href="{{ url_for('views.all_posts') }}" style="margin-left: 100px;" 
+class="btn btn-secondary">Back</a>
+<div class="container py-5">
+    <div class="card mx-auto shadow mb-5" style="max-width: 500px;">
+     <div class="card-body text-center " style="background-color:aquamarine;">
+    <img 
+    src="{{ url_for('static', filename='images/' + user.profile_image) }}" alt="Profile Image"
+    class="rounded-circle mb-3"
+    style="width: 200px; height: 200px; object-fit: cover;">
+    <h1 class="card-title"> {{ user.username }} </h1>
+    <p class="text-muted">{{ user.about }} </p>
     
-    
-    {% for post in posts %}
-    <div class="post">
-        <h2 style="color:black;"  >{{post.heading}}</h2>
-        <div class="card bord">  
-            {{ post.content[:5] }}{% if post.content|length > 5 %}...{% endif %}
-            <span id="full-content-{{ post.id }}" style="display: none;">
-                {{ post.content[5:] }}
-            </span>
-            <h3 style="color:grey;">Author: {{ post.users.fullname }} - {{ post.date_posted }}</h3>
-        </div>
-        
-        <!-- Read More Button -->
-        {% if post.content|length > 5 %}
-        <button type="button" onclick="showMore({{ post.id }})" id="read-more-{{ post.id }}">Read More</button>
-        <button type="button" onclick="showLess({{ post.id }})" id="show-less-{{ post.id }}" style="display: none;">Show Less</button>
+    {% if current_user.id == user.id %}
+    <div class="d-flex justify-content-center gap-3 mt-3">
+        {% if current_user.role == 'writer' %}
+            <a href="{{ url_for('views.add_posts') }}" class="btn btn-outline-success btn-sm">
+                Add Post
+            </a>
         {% endif %}
-        <hr>
+        <a href="{{ url_for('views.update_profile') }}" class="btn btn-outline-success btn-sm">
+             Update Profile
+        </a>
+        <span class="badge bg-success">{{ user.subscribers.count() }} subscribers</span>
     </div>
-    {% else %}
-    <p>No posts to show.</p>
-    {% endfor %}
+{% else %}
+    <div class="d-flex justify-content-center gap-3 align-items-center mt-3">
+        <span class="text-muted">{{ user.id.subscribers }}</span>
+        <form action="{{ url_for('views.subscribe', user_id=user.id) }}" method="POST">
+            {% if current_user.is_subscribed(user) %}
+            <button type="submit" class="btn btn-outline-primary btn-sm">Unsubscribe</button>
+            {% else %}
+            <button type="submit" class="btn btn-outline-primary btn-sm">Subscribe</button>
+            {% endif %}
+        </form>
+    </div>
+{% endif %}
+
+<br>
+   
+    <h2 class="text-primary text-center mb-4">Posts</h2>
+
+        <div class="row justify-content-center">
+            {% for post in posts %}
+            <div class="col-md-8 mx-auto">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">{{ post.heading }}</h5>
+                        <p class="text-muted">By {{ post.users.fullname }} - {{ post.date_posted }}</p>
+                    </div>
+                    <div class="card-body">
+                        {{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}
+                        <span id="full-content-{{ post.id }}" style="display: none;">
+                            {{ post.content[100:] }}
+                        </span>
+                    </div>
+                    <div class="card-footer">
+                        {% if post.content|length > 100 %}
+                        <button class="btn btn-sm btn-info" onclick="showMore({{ post.id }})" id="read-more-{{ post.id }}">Read More</button>
+                        <button class="btn btn-sm btn-secondary" onclick="showLess({{ post.id }})" id="show-less-{{ post.id }}" style="display: none;">Show Less</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-muted text-center">No posts to show.</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+
 
 <!-- JavaScript to Show More/Show Less -->
 <script>

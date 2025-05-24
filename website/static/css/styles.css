@@ -98,7 +98,7 @@ form {
     align-items: center;
     padding: 20px;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 12px;
     background-color: #f9f9f9;
     max-width: 800px;
     margin: 0 auto;
@@ -109,6 +109,14 @@ form {
     padding-right: 20px;
 }
 
+.profile-card {
+    background:yellowgreen;
+    border-radius: 15px;
+   
+    width: 350px;
+    text-align: center;
+    padding: 20px;
+}
 .profile-image {
     width: 150px;
     height: 150px;

@@ -65,7 +65,7 @@ def login():
             if check_password_hash(user.password,password):
                 login_user(user)
                 flash('user logged in successful',category='success')
-                return redirect(url_for('views.update_profile'))
+                return redirect(url_for('views.profile',user_id=user.id))
             else:
                 flash('incorrect information',category='error')
                 return redirect(url_for('auth.login'))

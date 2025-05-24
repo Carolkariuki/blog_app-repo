@@ -11,56 +11,54 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light " style="background-color:darkslateblue;">
    
     <a class="navbar-brand" href="{{url_for('views.home')}}">Home</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-
-    <li class="nav-item">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
       <a class="nav-link" href="{{url_for('views.all_posts')}}">All Posts</a>
-    </li>
-      </ul>
+      </li>
+    </ul>
     </div>
 
-
-
-
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ms-auto">
-        {% if current_user.is_authenticated %}
-          {% if current_user.role=='writer'%}
+    <ul class="navbar-nav ms-auto">
+      {% if current_user.is_authenticated %}
+        {% if current_user.role=='writer'%}
+          <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('views.profile',user_id=current_user.id) }}">Account</a>
+          </li>
+           
+          <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+          </li>
+      {% else %}
             <li class="nav-item">
-             <a class="nav-link" href="{{ url_for('views.update_profile') }}">Profile</a>
-              </li>
-            <li class="nav-item">
-             <a class="nav-link" href="{{ url_for('views.add_posts') }}">Add New Post</a>
-             </li>
-             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-              </li>
-              {% else %}
-              <a class="nav-link" href="{{ url_for('views.update_profile') }}">Profile</a>
-              </li>
+            <a class="nav-link" href="{{ url_for('views.profile',user_id=current_user.id) }}">Account</a>
+            </li>
             
-             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-              </li>
-              {%endif%}
+            <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+            </li>
+        {%endif%}
 
         {% else %}
           <li class="nav-item " >
             <a class="nav-link" href="{{url_for('auth.login')}}">Login</a>
           </li>
+
            <li class="nav-item " >
               <a class="nav-link" href="{{url_for('auth.signup')}}">Signup</a>
             </li>
-           {%  endif %}
+          {%  endif %}
              
         {% if error %}
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -88,18 +86,13 @@
                   {% endfor %}
                {% endif%} 
             {% endwith%}  
-    
-      
-
-      </ul>
-      
+    </ul>
     </div>
   </nav>
   {% block sub_navbar %}
   {% endblock %}
 
   <div class="container"  >{% block content %} 
-  
   
   {% endblock %} </div>
 
@@ -108,5 +101,4 @@
   crossorigin="anonymous"></script>  
   
 </body>
-
 </html>
